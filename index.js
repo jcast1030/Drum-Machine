@@ -59,24 +59,26 @@ const audioClip =[
 function App() {
 
     const [volume, setVolume] = React.useState(1);
+    const [name, setName] = React.useState("");
 
     return(
-        <div className="bg-info min-vh-100 text-white">
-            <div className="text-center">
+        <div className="bg-info min-vh-100 text-white" id="drum-machine">
+            <div className="text-center" id="display">
                 <h2>Drum Machine</h2>
                 {
                     audioClip.map((clip) => (
-                        <Pad key={clip.id} clip={clip} volume={volume}/>
+                        <Pad key={clip.id} clip={clip} volume={volume} setName={setName}/>
                     ))
                 }
                 <br />
                 <input type="range" onChange={(e) => setVolume(e.target.value)} step="0.01" value={volume} max="1" min="0" className="w-50" />
+                <h3>{name}</h3>
             </div>
         </div>
     );
 }
 
-function Pad({ clip, volume }) {
+function Pad({ clip, volume, setName }) {
 
     const [active, setActive] = React.useState(false);
 
@@ -98,15 +100,16 @@ function Pad({ clip, volume }) {
         const audioTag = document.getElementById(clip.keyTrig);
         setActive(true);
         setTimeout(() => setActive(false), 200)
-
+        
         audioTag.volume = volume;
         audioTag.currentTime = 0;
         audioTag.play();
+        setName(() => clip.id);
     }
 
     return (
-        <div onClick={playSound} className={`btn btn-secondary p-4 m-3 ${active && 'btn-warning'}`}>
-            <audio id={clip.keyTrig} src={clip.url}/>
+        <div onClick={playSound} id={clip.id} className={`drum-pad btn btn-secondary p-4 m-3 ${active && 'btn-warning'}`}>
+            <audio id={clip.keyTrig} src={clip.url} className="clip"/>
             {clip.keyTrig}
         </div>
     );
